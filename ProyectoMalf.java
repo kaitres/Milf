@@ -48,7 +48,17 @@ public class ProyectoMalf {
         public int getEstado(){
             return estado;
         }
-
+        public boolean existeEnTransicion(String search){
+            return transiciones.contains(search);
+        }
+        public void setEstado(int estado){
+            this.estado=estado;
+        }
+        public static void changeComienzo(Nodo nodo1, Nodo nodo2, String transicion){
+            nodo1.setEstado(0);
+            nodo2.setEstado(1);
+            nodo1.aniadirTransicion(nodo2, transicion);
+        }
 
     }
     /**
