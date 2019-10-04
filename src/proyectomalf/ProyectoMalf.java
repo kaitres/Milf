@@ -60,6 +60,69 @@ public class ProyectoMalf {
             nodo1.aniadirTransicion(nodo2, transicion);
         }
 
+        public static String segmentacion(String er,int count){
+            int x=0;
+
+            while (x<er.length()) {
+                if (er.charAt(x) == '(') {
+                    int pos = busqueda(x, er);
+                    String subEr=er.substring(x+1,pos);
+
+                    String rer=segmentacion(subEr,count+1)+er.substring(pos);
+                    er=(er.substring(0,x+1))+rer;
+
+
+                    x=pos;
+                }
+                if (er.charAt(x) == '*') {
+
+                }else {
+                    if (er.charAt(x) == '.') {
+                        if (er.charAt(x + 1) == '(') {
+                            //resolver parentesis
+                        } else {
+                            //es letra
+                        }
+                    } else {
+                        if (er.charAt(x) == '|') {
+
+                            if (er.charAt(x + 1) == '(') {
+                                //resolver parentesis
+                            } else {
+                                //es letra
+                            }
+                        } else {
+                            if (!(er.charAt(x) == ')')) {
+                                er = er.replace(er.charAt(x), (char) (count + '0'));
+                            }
+
+                        }
+
+
+                    }
+                }
+                x++;
+            }
+            return er;
+        }
+        public static int busqueda(int x, String er) {
+            int contadorA=0;
+            x++;
+            while (x<er.length()){
+                if (er.charAt(x)=='('){
+                    contadorA++;
+                }
+                if (er.charAt(x)==')'){
+                    contadorA--;
+                }
+                if (contadorA==-1){
+                    break;
+                }
+                x++;
+            }
+
+            return x;
+        }
     }
     /**
      * @param args the command line arguments
