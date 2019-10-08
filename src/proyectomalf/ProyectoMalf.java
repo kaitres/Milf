@@ -14,11 +14,30 @@ import java.util.Scanner;
  */
 
 public class ProyectoMalf {
+    public static class Parse{
+        Nodo nodo;
+        char caracter;
+        boolean isNodo=false;
+        Nodo fin;
+
+        public boolean isIsNodo() {
+            return isNodo;
+        }
+        public Parse(Nodo node) {
+            this.nodo=nodo;
+            isNodo=true;
+        }
+        public Parse(char caracter) {
+            this.caracter=caracter;
+        }
+        
+    }
     public static class Nodo{
         int numero;
         int estado;//puede ser 0 de transicion, 1 de inicio, 2 de final
-        ArrayList<String> transiciones ;
+        ArrayList<Character> transiciones ;
         ArrayList<Nodo> conexion;
+        Nodo fin;
         
         public Nodo(int numero, int estado){
             this.numero = numero;
@@ -26,14 +45,14 @@ public class ProyectoMalf {
             this.conexion = new ArrayList<>();
             this.transiciones = new ArrayList<>();
         }
-        public void aniadirTransicion(Nodo nodo, String transicion){
+        public void aniadirTransicion(Nodo nodo, char transicion){
             transiciones.add(transicion);
             conexion.add(nodo);
         }
-        public String getTransicion(int i){
+        public char getTransicion(int i){
             return transiciones.get(i);
         }
-        public ArrayList<String> getTransiciones(){
+        public ArrayList<Character> getTransiciones(){
             return transiciones;
         }
         public Nodo getNodo(int i){
@@ -54,75 +73,12 @@ public class ProyectoMalf {
         public void setEstado(int estado){
             this.estado=estado;
         }
-        public static void changeComienzo(Nodo nodo1, Nodo nodo2, String transicion){
+        public static void changeComienzo(Nodo nodo1, Nodo nodo2, char transicion){
             nodo1.setEstado(0);
             nodo2.setEstado(1);
             nodo1.aniadirTransicion(nodo2, transicion);
         }
 
-        public static String segmentacion(String er,int count){
-            int x=0;
-
-            while (x<er.length()) {
-                if (er.charAt(x) == '(') {
-                    int pos = busqueda(x, er);
-                    String subEr=er.substring(x+1,pos);
-
-                    String rer=segmentacion(subEr,count+1)+er.substring(pos);
-                    er=(er.substring(0,x+1))+rer;
-
-
-                    x=pos;
-                }
-                if (er.charAt(x) == '*') {
-
-                }else {
-                    if (er.charAt(x) == '.') {
-                        if (er.charAt(x + 1) == '(') {
-                            //resolver parentesis
-                        } else {
-                            //es letra
-                        }
-                    } else {
-                        if (er.charAt(x) == '|') {
-
-                            if (er.charAt(x + 1) == '(') {
-                                //resolver parentesis
-                            } else {
-                                //es letra
-                            }
-                        } else {
-                            if (!(er.charAt(x) == ')')) {
-                                er = er.replace(er.charAt(x), (char) (count + '0'));
-                            }
-
-                        }
-
-
-                    }
-                }
-                x++;
-            }
-            return er;
-        }
-        public static int busqueda(int x, String er) {
-            int contadorA=0;
-            x++;
-            while (x<er.length()){
-                if (er.charAt(x)=='('){
-                    contadorA++;
-                }
-                if (er.charAt(x)==')'){
-                    contadorA--;
-                }
-                if (contadorA==-1){
-                    break;
-                }
-                x++;
-            }
-
-            return x;
-        }
     }
     /**
      * @param args the command line arguments
@@ -137,7 +93,7 @@ public class ProyectoMalf {
     
     
     
-    private static ArrayList buscarComando(String exprecion, int tipo){
+    /*private static ArrayList buscarComando(String exprecion, int tipo){
         String aux= exprecion;
         boolean afueraParentecis;
         int contParentecis =0;
@@ -203,33 +159,209 @@ public class ProyectoMalf {
         }
         return retu;
     }
-    private static String parentecis(String exprecion , int index){
-            int count=0;
+*/
+    private static int contador(){
+        return contador+1;
+    }
+
+    private static Nodo crearEstrella_Basica(char cararcater){
+        Nodo nodo= new Nodo(contador(), 0);
+        nodo.aniadirTransicion(new Nodo(contador(), 1), 'E');
+        nodo.getNodo(0).aniadirTransicion(new Nodo(contador(), 1), cararcater);
+        nodo.getNodo(0).getNodo(0).aniadirTransicion(new Nodo(contador(), 2), 'E');
+        nodo.getNodo(0).getNodo(0).aniadirTransicion(nodo.getNodo(0), 'E');
+        nodo.aniadirTransicion(nodo.getNodo(0).getNodo(0).getNodo(0), 'E');
+        nodo.fin=nodo.getNodo(0).getNodo(0).getNodo(0);
+        return nodo;
+    }
+    
+    private static Nodo crearBarra_Basica(char c1 , char c2){
+        Nodo nodo= new Nodo(contador(), 0);
+        Nodo fin = new Nodo(contador(), 2);
+        
+        nodo.aniadirTransicion(new Nodo(contador(), 1), 'E');
+        nodo.aniadirTransicion(new Nodo(contador(), 1), 'E');
+        
+        nodo.getNodo(0).aniadirTransicion(new Nodo(contador(), 1), c1);
+        nodo.getNodo(1).aniadirTransicion(new Nodo(contador(), 1), c2);
+        
+        nodo.getNodo(0).getNodo(0).aniadirTransicion(fin, 'E');
+        nodo.getNodo(1).getNodo(0).aniadirTransicion(fin, 'E');
+        
+        nodo.fin=fin;
+        
+        
+       return nodo;
+       
+        
+    }
+    
+    private static Nodo crearPunto_basico(char caracter1, char caracter2 ){
+        Nodo nodo= new Nodo(contador(), 0);
+        nodo.aniadirTransicion(new Nodo(contador(), 1), 'E');
+        nodo.getNodo(0).aniadirTransicion(new Nodo(contador(), 1), caracter1);
+        nodo.getNodo(0).getNodo(0).aniadirTransicion(new Nodo(contador(), 2), caracter2);
+        nodo.fin=nodo.getNodo(0).getNodo(0).getNodo(0);
+        return nodo;
+        
+    }
+    private static Nodo estrella(Object entrada){
+        if(entrada instanceof Nodo){
+            //rellenar
+        }
+        if(entrada instanceof Character){
+            Nodo nodo = crearEstrella_Basica((Character)entrada);
+            return nodo;
+        }
+        return null;
+    }
+    private static Nodo barra(Object entrada1,Object entrada2){
+        if ((entrada1 instanceof Character) && (entrada2 instanceof Character )) {
+            Nodo nodo= crearBarra_Basica((Character)entrada1, (Character)entrada2);
+            return nodo;
+        }
+        if((entrada1 instanceof Character) && (entrada2 instanceof Nodo )){
             
-            for (int i = index + 1; i < exprecion.length(); i++) {
-                if(exprecion.charAt(i)=='('){
-                    count+=1;
+        }
+        if((entrada1 instanceof Nodo) && (entrada2 instanceof Character )){
+            
+        }
+        if((entrada1 instanceof Nodo) && (entrada2 instanceof Nodo )){
+            
+        }
+        
+        return null;
+    }
+    private static Nodo Punto(Object entrada1,Object entrada2){
+        System.out.println("estoy en ");
+        if ((entrada1 instanceof Character) && (entrada2 instanceof Character )) {
+            System.out.println("hoaskdokasodkasodka");
+            Nodo nodo= crearPunto_basico((Character)entrada1, (Character)entrada2);
+            return nodo;
+        }
+        if((entrada1 instanceof Character) && (entrada2 instanceof Nodo )){
+            
+        }
+        if((entrada1 instanceof Nodo) && (entrada2 instanceof Character )){
+            
+        }
+        if((entrada1 instanceof Nodo) && (entrada2 instanceof Nodo )){
+            Nodo nodo=(Nodo)entrada1;
+            nodo.fin.aniadirTransicion(nodo, 'E');
+            
+            return nodo;
+            
+        }
+        
+        return null;
+    }
+    
+    private static Nodo recucion(ArrayList<Object> exprecion){
+        System.out.println("dentro recurcion");
+        Nodo aux;
+        //falta el parentecis
+        int i=0;
+        while(i<parseo.size()){
+            if(parseo.get(i) instanceof Character){
+                if((Character) parseo.get(i)=='*'){
+                    aux= estrella(parseo.get(i-1));
+                    parseo.remove(i);
+                    parseo.remove(i-1);
+                    parseo.add(i-1, aux);
+                    
                 }
-                if(exprecion.charAt(i)==')'){
-                    if(count>0){
-                        count-=1;
+            }
+            i++;
+        }
+         i=0;
+        while(i<parseo.size()){
+            if(parseo.get(i) instanceof Character){
+                if((Character) parseo.get(i)=='.'){
+                    
+                    aux= Punto(parseo.get(i-1), parseo.get(i+1));
+                    System.out.println(parseo);
+                    parseo.remove(i+1);
+                    System.out.println(parseo);
+                    parseo.remove(i);
+                    System.out.println(parseo);
+                    parseo.remove(i-1);
+                    System.out.println(parseo);
+                    parseo.add(i-1, aux);
+                    System.out.println("resultado");
+                    System.out.println(parseo);
+                }
+            }
+            i++;
+        }
+         i=0;
+        while(i<parseo.size()){
+            if(parseo.get(i) instanceof Character){
+                if((Character) parseo.get(i)=='|'){
+                    aux=(barra(parseo.get(i-1), parseo.get(i+1)));
+                    parseo.remove(i+1);
+                    parseo.remove(i);
+                    parseo.remove(i-1);
+                    parseo.add(i-1, aux);
+                    
+                }
+            }
+            i++;
+        }
+        return (Nodo)parseo.get(0);
+    }
+    private static String parentecis(String exprecion , int index){
+        int count=0;    
+        if(exprecion.charAt(index) =='(' ){ 
+                
+
+                for (int i = index + 1; i < exprecion.length(); i++) {
+                    if(exprecion.charAt(i)=='('){
+                        count+=1;
                     }
-                    else{
-                        return  exprecion.substring((index + 1), i);
+                    if(exprecion.charAt(i)==')'){
+                        if(count>0){
+                            count-=1;
+                        }
+                        else{
+                            return  exprecion.substring((index + 1), i);
+                        }
                     }
                 }
             }
+            if(exprecion.charAt(index) ==')' ){ 
+                for (int i = index-1; i >= 0; i--) {
+                    if(exprecion.charAt(i)==')'){
+                        count+=1;
+                    }
+                    if(exprecion.charAt(i)=='('){
+                        if(count>0){
+                            count-=1;
+                        }
+                        else{
+                            return  exprecion.substring(i, index-1);
+                        }
+                    }
+                }
+            }    
             return "0";
         }
-    
+        public static int contador=0;
+        public static ArrayList<Object> parseo= new ArrayList();
         public static void main(String[] args) {
-        
+           
         
         
         Scanner scan= new Scanner(System.in);
         String entrada= scan.next();
-        System.out.println(buscarComando(entrada, 2));
-
+        int i=0;
+        while(i<entrada.length()){
+            parseo.add((entrada.charAt(i)));
+            i++;
+        }
+            System.out.println(parseo);
+            System.out.println(recucion(parseo));
+                
+        
         
         
         
