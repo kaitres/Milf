@@ -161,7 +161,7 @@ public class ProyectoMalf {
     }
 */
     private static int contador(){
-        return contador+1;
+        return contador+=1;
     }
 
     private static Nodo crearEstrella_Basica(char cararcater){
@@ -198,10 +198,9 @@ public class ProyectoMalf {
     
     private static Nodo crearPunto_basico(char caracter1, char caracter2 ){
         Nodo nodo= new Nodo(contador(), 0);
-        nodo.aniadirTransicion(new Nodo(contador(), 1), 'E');
-        nodo.getNodo(0).aniadirTransicion(new Nodo(contador(), 1), caracter1);
-        nodo.getNodo(0).getNodo(0).aniadirTransicion(new Nodo(contador(), 2), caracter2);
-        nodo.fin=nodo.getNodo(0).getNodo(0).getNodo(0);
+        nodo.aniadirTransicion(new Nodo(contador(), 1), caracter1);
+        nodo.getNodo(0).aniadirTransicion(new Nodo(contador(), 2), caracter2);
+        nodo.fin=nodo.getNodo(0).getNodo(0);
         return nodo;
         
     }
@@ -345,6 +344,20 @@ public class ProyectoMalf {
             }    
             return "0";
         }
+    private static void imprimirNodo(Nodo n, Nodo fin){
+        if (n.numero==fin.numero){
+            return;
+        }
+
+            for (Nodo i : n.conexion) {
+                if (n.numero>i.numero) return;
+                System.out.println(n.numero + " " + n.transiciones.get(n.conexion.indexOf(i)) + " " + i.numero);
+
+                imprimirNodo(i, fin);
+
+        }
+        return;
+    }
         public static int contador=0;
         public static ArrayList<Object> parseo= new ArrayList();
         public static void main(String[] args) {
@@ -360,7 +373,8 @@ public class ProyectoMalf {
         }
             System.out.println(parseo);
             System.out.println(recucion(parseo));
-                
+            imprimirNodo(((Nodo) parseo.get(0)), ((Nodo) parseo.get(0)).fin);
+
         
         
         
