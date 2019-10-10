@@ -16,85 +16,6 @@ public class ProyectoMalf {
     public static int contador = 0;
     public static ArrayList<Object> parseo = new ArrayList();
 
-    /**
-     * @param args the command line arguments
-     */
-
-
-    //* >>>> . >>>>> | >>>>
-        
-
-   
-    
-    
-    
-    /*private static ArrayList buscarComando(String exprecion, int tipo){
-        String aux= exprecion;
-        boolean afueraParentecis;
-        int contParentecis =0;
-        ArrayList<Integer> retu= new ArrayList<>();
-        if(tipo==0){//*
-            for (int i = 0; i < exprecion.length(); i++) {
-                if (exprecion.charAt(i)=='*') {
-                    contParentecis =0;
-                    for (int j = i; j >= 0; j--) {
-                        if(exprecion.charAt(j)=='('){
-                            contParentecis+=1;
-                        }
-                        if(exprecion.charAt(j)==')'){
-                            contParentecis-=1;
-                        }
-                        
-                    }
-                    if(contParentecis==0){
-                        retu.add(i);
-                    }
-                }
-            }
-        }
-        if(tipo==1){//.
-             for (int i = 0; i < exprecion.length(); i++) {
-                if (exprecion.charAt(i)=='.') {
-                    contParentecis =0;
-                    for (int j = i; j >= 0; j--) {
-                        if(exprecion.charAt(j)=='('){
-                            contParentecis+=1;
-                        }
-                        if(exprecion.charAt(j)==')'){
-                            contParentecis-=1;
-                        }
-                        
-                    }
-                    if(contParentecis==0){
-                        retu.add(i);
-                    }
-                }
-            }
-            
-        }
-        if(tipo==2){//|
-             for (int i = 0; i < exprecion.length(); i++) {
-                if (exprecion.charAt(i)=='|') {
-                    contParentecis =0;
-                    for (int j = i; j >= 0; j--) {
-                        if(exprecion.charAt(j)=='('){
-                            contParentecis+=1;
-                        }
-                        if(exprecion.charAt(j)==')'){
-                            contParentecis-=1;
-                        }
-                        
-                    }
-                    if(contParentecis==0){
-                        retu.add(i);
-                    }
-                }
-            }
-            
-        }
-        return retu;
-    }
-*/
     private static int contador() {
         return contador += 1;
     }
@@ -142,7 +63,18 @@ public class ProyectoMalf {
 
     private static Nodo estrella(Object entrada) {
         if (entrada instanceof Nodo) {
-            //rellenar
+            Nodo nodo = new Nodo(contador(), 0);
+            Nodo fin = new Nodo(contador(), 2);
+
+            nodo.aniadirTransicion(((Nodo)(entrada)),'E');
+            ((Nodo)(entrada)).fin.aniadirTransicion(fin,'E');
+
+            ((Nodo) entrada).fin.aniadirTransicion((Nodo)(entrada),'E');
+            ((Nodo) entrada).setEstado(1);
+            ((Nodo) entrada).fin.setEstado(1);
+
+            nodo.aniadirTransicion(fin,'E');
+            nodo.fin=fin;
         }
         if (entrada instanceof Character) {
             Nodo nodo = crearEstrella_Basica((Character) entrada);
@@ -158,17 +90,75 @@ public class ProyectoMalf {
         }
         if ((entrada1 instanceof Character) && (entrada2 instanceof Nodo)) {
 
+            Nodo nodo = new Nodo(contador(), 0);
+            Nodo fin = new Nodo(contador(), 2);
+            //caracter
+            nodo.aniadirTransicion(new Nodo(contador(),1),'E');
+            nodo.getNodo(0).aniadirTransicion(new Nodo(contador(),1),(Character)entrada1);
+            nodo.getNodo(0).getNodo(0).aniadirTransicion(fin,'E');
+
+            //nodo
+            nodo.aniadirTransicion(((Nodo)entrada2),'E');
+            ((Nodo)entrada2).setEstado(1);
+            ((Nodo)entrada2).fin.setEstado(1);
+            ((Nodo)entrada2).fin.aniadirTransicion(fin,'E');
+
+
+
+            nodo.fin = fin;
+
+
+            return nodo;
         }
         if ((entrada1 instanceof Nodo) && (entrada2 instanceof Character)) {
+            Nodo nodo = new Nodo(contador(), 0);
+            Nodo fin = new Nodo(contador(), 2);
+            //caracter
+            nodo.aniadirTransicion(new Nodo(contador(),1),'E');
+            nodo.getNodo(0).aniadirTransicion(new Nodo(contador(),1),(Character)entrada2);
+            nodo.getNodo(0).getNodo(0).aniadirTransicion(fin,'E');
 
+            //nodo
+            nodo.aniadirTransicion(((Nodo)entrada1),'E');
+            ((Nodo)entrada1).setEstado(1);
+            ((Nodo)entrada1).fin.setEstado(1);
+            ((Nodo)entrada1).fin.aniadirTransicion(fin,'E');
+
+
+
+            nodo.fin = fin;
+
+
+            return nodo;
         }
         if ((entrada1 instanceof Nodo) && (entrada2 instanceof Nodo)) {
+            Nodo nodo = new Nodo(contador(), 0);
+            Nodo fin = new Nodo(contador(), 2);
+
+            nodo.aniadirTransicion(((Nodo)entrada1),'E');
+            nodo.aniadirTransicion(((Nodo)entrada2),'E');
+
+            ((Nodo)entrada1).setEstado(1);
+            ((Nodo)entrada2).setEstado(1);
+
+            ((Nodo)entrada1).fin.setEstado(1);
+            ((Nodo)entrada2).fin.setEstado(1);
+
+            ((Nodo)entrada1).fin.aniadirTransicion(fin,'E');
+            ((Nodo)entrada2).fin.aniadirTransicion(fin,'E');
+
+            nodo.fin = fin;
+
+
+            return nodo;
 
         }
 
         return null;
     }
 
+
+//esta lista esta wea
     private static Nodo Punto(Object entrada1, Object entrada2) {
         System.out.println("estoy en ");
         if ((entrada1 instanceof Character) && (entrada2 instanceof Character)) {
@@ -177,14 +167,28 @@ public class ProyectoMalf {
             return nodo;
         }
         if ((entrada1 instanceof Character) && (entrada2 instanceof Nodo)) {
-
+            System.out.println("estoy slkjdisjfisdjfiojsdoij");
+            Nodo nodo = new Nodo(contador(), 0);
+            nodo.aniadirTransicion((Nodo)(entrada2), (Character)(entrada1));
+            ((Nodo)(entrada2)).setEstado(1);
+            nodo.fin =((Nodo)(entrada2)).fin;
+            return nodo;
         }
         if ((entrada1 instanceof Nodo) && (entrada2 instanceof Character)) {
-
+            Nodo nodo = ((Nodo)(entrada1));
+            Nodo auxfin= new Nodo(contador(),2);
+            nodo.fin.setEstado(1);
+            nodo.fin.aniadirTransicion( auxfin ,((Character)(entrada2))  );
+            nodo.fin= auxfin;
+            return nodo;
         }
         if ((entrada1 instanceof Nodo) && (entrada2 instanceof Nodo)) {
-            Nodo nodo = (Nodo) entrada1;
-            nodo.fin.aniadirTransicion(nodo, 'E');
+            Nodo nodo = ((Nodo) (entrada1));
+            Nodo auxfin=((Nodo) (entrada2));
+            nodo.fin.aniadirTransicion(auxfin, 'E');
+            nodo.fin.setEstado(1);
+            nodo.fin= auxfin.fin;
+            auxfin.setEstado(1);
 
             return nodo;
 
@@ -216,6 +220,11 @@ public class ProyectoMalf {
                 if ((Character) parseo.get(i) == '.') {
 
                     aux = Punto(parseo.get(i - 1), parseo.get(i + 1));
+
+
+
+
+
                     System.out.println(parseo);
                     parseo.remove(i + 1);
                     System.out.println(parseo);
@@ -226,6 +235,7 @@ public class ProyectoMalf {
                     parseo.add(i - 1, aux);
                     System.out.println("resultado");
                     System.out.println(parseo);
+                    i--;
                 }
             }
             i++;
@@ -281,18 +291,19 @@ public class ProyectoMalf {
         }
         return "0";
     }
-
+//esta mala la funcion de imprimir Carlos qlo
     private static void imprimirNodo(Nodo n, Nodo fin) {
         if (n.numero == fin.numero) {
             return;
         }
-
+        n.check=true;
         for (Nodo i : n.conexion) {
-            if (n.numero > i.numero) return;
-            System.out.println(n.numero + " " + n.transiciones.get(n.conexion.indexOf(i)) + " " + i.numero);
-
+            if(i.check!=true){
+                System.out.println(n.numero + " " + n.transiciones.get(n.conexion.indexOf(i)) + " " + i.numero);
+            }else{
+                return;
+            }
             imprimirNodo(i, fin);
-
         }
         return;
     }
@@ -338,6 +349,7 @@ public class ProyectoMalf {
     public static class Nodo {
         int numero;
         int estado;//puede ser 0 de transicion, 1 de inicio, 2 de final
+        boolean check=false;
         ArrayList<Character> transiciones;
         ArrayList<Nodo> conexion;
         Nodo fin;
