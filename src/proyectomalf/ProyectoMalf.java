@@ -16,7 +16,7 @@ public class ProyectoMalf {
     public static int contador = 0;
     public static ArrayList<Integer> K_AFND = new ArrayList<>();
     public static ArrayList<String> Conexiones = new ArrayList<>();
-    public static ArrayList<Object> parseo = new ArrayList<>();
+
 
     private static int contador() {
         return contador += 1;
@@ -202,97 +202,124 @@ public class ProyectoMalf {
         return nodo;
     }
     private static Nodo recucion(ArrayList<Object> exprecion) {
+
         Nodo aux;
         //falta el parentecis
         int i = 0;
-        if (parseo.size()==1){
-            aux=casoBase((Character)parseo.get(0));
-            parseo.remove(0);
-            parseo.add(aux);
+        if (exprecion.size()==1){
+            aux=casoBase((Character)exprecion.get(0));
+            exprecion.remove(0);
+            exprecion.add(aux);
 
         }
-        while (i < parseo.size()) {
-            if (parseo.get(i) instanceof Character) {
-                if ((Character) parseo.get(i) == '*') {
+        while (i < exprecion.size()) {
+            if (exprecion.get(i) instanceof Character) {
+                if ((Character) exprecion.get(i) == '(') {
+                    ArrayList<Object> auxiliar= new ArrayList<>();
+                    auxiliar=parentecis(exprecion,i);
+                    int iniceMayor= indexFinalParentecis(exprecion,i);
 
-                    aux = estrella(parseo.get(i - 1));
+                    for (int k = 0; k < iniceMayor-i; ++k) {
+                        exprecion.remove(i);
+                    }
 
-                    parseo.remove(i);
-                    parseo.remove(i - 1);
-                    parseo.add(i - 1, aux);
+                    exprecion.set(i,recucion(auxiliar));
+
+                }
+            }
+            i++;
+        }
+        i=0;
+
+        while (i < exprecion.size()) {
+            if (exprecion.get(i) instanceof Character) {
+                if ((Character) exprecion.get(i) == '*') {
+
+                    aux = estrella(exprecion.get(i - 1));
+
+                    exprecion.remove(i);
+                    exprecion.remove(i - 1);
+                    exprecion.add(i - 1, aux);
                     i--;
                 }
             }
             i++;
         }
         i = 0;
-        while (i < parseo.size()) {
-            if (parseo.get(i) instanceof Character) {
-                if ((Character) parseo.get(i) == '.') {
 
-                    aux = Punto(parseo.get(i - 1), parseo.get(i + 1));
+        while (i < exprecion.size()) {
+            if (exprecion.get(i) instanceof Character) {
+                if ((Character) exprecion.get(i) == '.') {
 
-                    parseo.remove(i + 1);
-                    parseo.remove(i);
-                    parseo.remove(i - 1);
-                    parseo.add(i - 1, aux);
+                    aux = Punto(exprecion.get(i - 1), exprecion.get(i + 1));
+
+                    exprecion.remove(i + 1);
+                    exprecion.remove(i);
+                    exprecion.remove(i - 1);
+                    exprecion.add(i - 1, aux);
                     i--;
                 }
             }
             i++;
         }
         i = 0;
-        while (i < parseo.size()) {
-            if (parseo.get(i) instanceof Character) {
-                if ((Character) parseo.get(i) == '|') {
 
-                    aux = (barra(parseo.get(i - 1), parseo.get(i + 1)));
+        while (i < exprecion.size()) {
+            if (exprecion.get(i) instanceof Character) {
+                if ((Character) exprecion.get(i) == '|') {
 
-                    parseo.remove(i + 1);
-                    parseo.remove(i);
-                    parseo.remove(i - 1);
-                    parseo.add(i - 1, aux);
+                    aux = (barra(exprecion.get(i - 1), exprecion.get(i + 1)));
+
+                    exprecion.remove(i + 1);
+                    exprecion.remove(i);
+                    exprecion.remove(i - 1);
+                    exprecion.add(i - 1, aux);
                     i--;
                 }
             }
             i++;
         }
-        return (Nodo) parseo.get(0);
+        return (Nodo) exprecion.get(0);
     }
 
-    private static String parentecis(String exprecion, int index) {
+    private static ArrayList parentecis(ArrayList lista, int index) {
+        ArrayList<Object> aux=new ArrayList<>();
         int count = 0;
-        if (exprecion.charAt(index) == '(') {
-
-
-            for (int i = index + 1; i < exprecion.length(); i++) {
-                if (exprecion.charAt(i) == '(') {
+        if ((Character )lista.get(index)== '(') {
+            for (int i = index + 1; i <lista.size(); i++) {
+                if ((Character )lista.get(i) == '(') {
                     count += 1;
                 }
-                if (exprecion.charAt(i) == ')') {
+                if ((Character )lista.get(i)== ')') {
                     if (count > 0) {
                         count -= 1;
                     } else {
-                        return exprecion.substring((index + 1), i);
+                        return aux;
+                    }
+                }
+                aux.add(lista.get(i));
+            }
+        }
+        return null;
+    }
+
+    private static int indexFinalParentecis(ArrayList lista, int index){
+        int count = 0;
+        if ((Character )lista.get(index)== '(') {
+            for (int i = index + 1; i <lista.size(); i++) {
+                if ((Character )lista.get(i) == '(') {
+                    count += 1;
+                }
+                if ((Character )lista.get(i)== ')') {
+                    if (count > 0) {
+                        count -= 1;
+                    } else {
+                        return i;
                     }
                 }
             }
         }
-        if (exprecion.charAt(index) == ')') {
-            for (int i = index - 1; i >= 0; i--) {
-                if (exprecion.charAt(i) == ')') {
-                    count += 1;
-                }
-                if (exprecion.charAt(i) == '(') {
-                    if (count > 0) {
-                        count -= 1;
-                    } else {
-                        return exprecion.substring(i, index - 1);
-                    }
-                }
-            }
-        }
-        return "0";
+        return 0;
     }
 
     private static void imprimirNodo(Nodo nodo) {
@@ -313,8 +340,9 @@ public class ProyectoMalf {
     }
 
     public static void main(String[] args) {
+        ArrayList<Object> parseo = new ArrayList<>();
         Conexiones.add("Delta:");
-
+        Nodo grafo;
         Scanner scan = new Scanner(System.in);
         String entrada = scan.next();
         int i = 0;
@@ -322,9 +350,8 @@ public class ProyectoMalf {
             parseo.add((entrada.charAt(i)));
             i++;
         }
-        System.out.println(parseo);
-        System.out.println(recucion(parseo));
-        imprimirNodo((Nodo)parseo.get(0));
+        grafo= recucion(parseo);
+        imprimirNodo(grafo);
 
 
     }
