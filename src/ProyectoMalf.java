@@ -59,8 +59,8 @@ public class ProyectoMalf {
             ((Nodo) (entrada)).fin.anadirTransicion(fin, '_');
 
             ((Nodo) entrada).fin.anadirTransicion((Nodo) (entrada), '_');
-            ((Nodo) entrada).setEstado(EstadoNodo.TRANSITION);
-            ((Nodo) entrada).fin.setEstado(EstadoNodo.TRANSITION);
+            ((Nodo) entrada).estado = EstadoNodo.TRANSITION;
+            ((Nodo) entrada).fin.estado = EstadoNodo.TRANSITION;
 
             nodo.anadirTransicion(fin, '_');
             nodo.fin = fin;
@@ -88,8 +88,8 @@ public class ProyectoMalf {
 
             //nodo
             nodo.anadirTransicion(((Nodo) entrada2), '_');
-            ((Nodo) entrada2).setEstado(EstadoNodo.TRANSITION);
-            ((Nodo) entrada2).fin.setEstado(EstadoNodo.TRANSITION);
+            ((Nodo) entrada2).estado = EstadoNodo.TRANSITION;
+            ((Nodo) entrada2).fin.estado = EstadoNodo.TRANSITION;
             ((Nodo) entrada2).fin.anadirTransicion(fin, '_');
 
             nodo.fin = fin;
@@ -106,8 +106,8 @@ public class ProyectoMalf {
 
             //nodo
             nodo.anadirTransicion(((Nodo) entrada1), '_');
-            ((Nodo) entrada1).setEstado(EstadoNodo.TRANSITION);
-            ((Nodo) entrada1).fin.setEstado(EstadoNodo.TRANSITION);
+            ((Nodo) entrada1).estado = EstadoNodo.TRANSITION;
+            ((Nodo) entrada1).fin.estado = EstadoNodo.TRANSITION;
             ((Nodo) entrada1).fin.anadirTransicion(fin, '_');
 
             nodo.fin = fin;
@@ -121,11 +121,11 @@ public class ProyectoMalf {
             nodo.anadirTransicion(((Nodo) entrada1), '_');
             nodo.anadirTransicion(((Nodo) entrada2), '_');
 
-            ((Nodo) entrada1).setEstado(EstadoNodo.TRANSITION);
-            ((Nodo) entrada2).setEstado(EstadoNodo.TRANSITION);
+            ((Nodo) entrada1).estado = EstadoNodo.TRANSITION;
+            ((Nodo) entrada2).estado = EstadoNodo.TRANSITION;
 
-            ((Nodo) entrada1).fin.setEstado(EstadoNodo.TRANSITION);
-            ((Nodo) entrada2).fin.setEstado(EstadoNodo.TRANSITION);
+            ((Nodo) entrada1).fin.estado = EstadoNodo.TRANSITION;
+            ((Nodo) entrada2).fin.estado = EstadoNodo.TRANSITION;
 
             ((Nodo) entrada1).fin.anadirTransicion(fin, '_');
             ((Nodo) entrada2).fin.anadirTransicion(fin, '_');
@@ -146,14 +146,14 @@ public class ProyectoMalf {
         if ((entrada1 instanceof Character) && (entrada2 instanceof Nodo)) {
             Nodo nodo = new Nodo(contador(), EstadoNodo.START);
             nodo.anadirTransicion((Nodo) (entrada2), (Character) (entrada1));
-            ((Nodo) (entrada2)).setEstado(EstadoNodo.TRANSITION);
+            ((Nodo) (entrada2)).estado = EstadoNodo.TRANSITION;
             nodo.fin = ((Nodo) (entrada2)).fin;
             return nodo;
         }
         if ((entrada1 instanceof Nodo) && (entrada2 instanceof Character)) {
             Nodo nodo = ((Nodo) (entrada1));
             Nodo auxfin = new Nodo(contador(), EstadoNodo.FINAL);
-            nodo.fin.setEstado(EstadoNodo.TRANSITION);
+            nodo.fin.estado = EstadoNodo.TRANSITION;
             nodo.fin.anadirTransicion(auxfin, ((Character) (entrada2)));
             nodo.fin = auxfin;
             return nodo;
@@ -162,9 +162,9 @@ public class ProyectoMalf {
             Nodo nodo = ((Nodo) (entrada1));
             Nodo auxfin = ((Nodo) (entrada2));
             nodo.fin.anadirTransicion(auxfin, '_');
-            nodo.fin.setEstado(EstadoNodo.TRANSITION);
+            nodo.fin.estado = EstadoNodo.TRANSITION;
             nodo.fin = auxfin.fin;
-            auxfin.setEstado(EstadoNodo.TRANSITION);
+            auxfin.estado = EstadoNodo.TRANSITION;
 
             return nodo;
         }
@@ -180,39 +180,31 @@ public class ProyectoMalf {
     }
 
     private static Nodo recursion(ArrayList<Object> expresion) {
-
         Nodo aux;
         //falta el parentesis
-        int i = 0;
         if (expresion.size() == 1) {
             aux = casoBase((Character) expresion.get(0));
             expresion.remove(0);
             expresion.add(aux);
-
         }
-        while (i < expresion.size()) {
+
+        for (int i = 0; i < expresion.size(); i++) {
             if (expresion.get(i) instanceof Character) {
                 if ((Character) expresion.get(i) == '(') {
-                    ArrayList<Object> auxiliar = new ArrayList<>();
-                    auxiliar = parentesis(expresion, i);
+                    ArrayList<Object> auxiliar = parentesis(expresion, i);
                     int indiceMayor = indexFinalParentesis(expresion, i);
 
-                    for (int k = 0; k < indiceMayor - i; ++k) {
+                    for (int k = 0; k < indiceMayor - i; k++)
                         expresion.remove(i);
-                    }
 
                     expresion.set(i, recursion(auxiliar));
-
                 }
             }
-            i++;
         }
-        i = 0;
 
-        while (i < expresion.size()) {
+        for (int i = 0; i < expresion.size(); i++) {
             if (expresion.get(i) instanceof Character) {
                 if ((Character) expresion.get(i) == '*') {
-
                     aux = estrella(expresion.get(i - 1));
 
                     expresion.remove(i);
@@ -221,14 +213,11 @@ public class ProyectoMalf {
                     i--;
                 }
             }
-            i++;
         }
-        i = 0;
 
-        while (i < expresion.size()) {
+        for (int i = 0; i < expresion.size(); i++) {
             if (expresion.get(i) instanceof Character) {
                 if ((Character) expresion.get(i) == '.') {
-
                     aux = Punto(expresion.get(i - 1), expresion.get(i + 1));
 
                     expresion.remove(i + 1);
@@ -238,15 +227,12 @@ public class ProyectoMalf {
                     i--;
                 }
             }
-            i++;
         }
-        i = 0;
 
-        while (i < expresion.size()) {
+        for (int i = 0; i < expresion.size(); i++) {
             if (expresion.get(i) instanceof Character) {
                 if ((Character) expresion.get(i) == '|') {
-
-                    aux = (barra(expresion.get(i - 1), expresion.get(i + 1)));
+                    aux = barra(expresion.get(i - 1), expresion.get(i + 1));
 
                     expresion.remove(i + 1);
                     expresion.remove(i);
@@ -255,7 +241,6 @@ public class ProyectoMalf {
                     i--;
                 }
             }
-            i++;
         }
         return (Nodo) expresion.get(0);
     }
@@ -265,15 +250,13 @@ public class ProyectoMalf {
         int count = 0;
         if ((Character) lista.get(index) == '(') {
             for (int i = index + 1; i < lista.size(); i++) {
-                if ((Character) lista.get(i) == '(') {
-                    count += 1;
-                }
-                if ((Character) lista.get(i) == ')') {
-                    if (count > 0) {
-                        count -= 1;
-                    } else {
+                if ((Character) lista.get(i) == '(')
+                    count++;
+                else if ((Character) lista.get(i) == ')') {
+                    if (count > 0)
+                        count--;
+                    else
                         return aux;
-                    }
                 }
                 aux.add(lista.get(i));
             }
@@ -285,22 +268,20 @@ public class ProyectoMalf {
         int count = 0;
         if ((Character) lista.get(index) == '(') {
             for (int i = index + 1; i < lista.size(); i++) {
-                if ((Character) lista.get(i) == '(') {
-                    count += 1;
-                }
-                if ((Character) lista.get(i) == ')') {
-                    if (count > 0) {
-                        count -= 1;
-                    } else {
+                if ((Character) lista.get(i) == '(')
+                    count++;
+                else if ((Character) lista.get(i) == ')') {
+                    if (count > 0)
+                        count--;
+                    else
                         return i;
-                    }
                 }
             }
         }
         return 0;
     }
 
-    private static void imprimirNodo(Nodo nodo) {
+    private static void printAFND(Nodo nodo) {
         System.out.println("AFND:");
         System.out.print("K={");
         int i = K_AFND.get(K_AFND.size() - 1);
@@ -321,23 +302,22 @@ public class ProyectoMalf {
         ArrayList<Object> parseo = new ArrayList<>();
         Conexiones.add("Delta:");
         Nodo grafo;
+
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String entrada = "";
+        String regex = "";
         try {
-            entrada = br.readLine();
+            regex = br.readLine();
         } catch (IOException e) {
             System.out.println("Can't read from input");
             e.printStackTrace();
             System.exit(-1);
         }
-        System.out.println(entrada.length());
-        int i = 0;
-        while (i < entrada.length()) {
-            parseo.add((entrada.charAt(i)));
-            i++;
-        }
+
+        for (int i = 0; i < regex.length(); i++)
+            parseo.add(regex.charAt(i));
+
         grafo = recursion(parseo);
-        imprimirNodo(grafo);
+        printAFND(grafo);
     }
 
     enum EstadoNodo {
@@ -363,8 +343,8 @@ public class ProyectoMalf {
         }
 
         public static void changeComienzo(Nodo nodo1, Nodo nodo2, char transicion) {
-            nodo1.setEstado(EstadoNodo.START);
-            nodo2.setEstado(EstadoNodo.TRANSITION);
+            nodo1.estado = EstadoNodo.START;
+            nodo2.estado = EstadoNodo.TRANSITION;
             nodo1.anadirTransicion(nodo2, transicion);
         }
 
@@ -384,22 +364,6 @@ public class ProyectoMalf {
 
         public Nodo getNodo(int i) {
             return conexion.get(i);
-        }
-
-        public ArrayList<Nodo> getNodos() {
-            return conexion;
-        }
-
-        public int getNumero() {
-            return numero;
-        }
-
-        public EstadoNodo getEstado() {
-            return estado;
-        }
-
-        public void setEstado(EstadoNodo estado) {
-            this.estado = estado;
         }
 
         public boolean existeEnTransicion(String search) {
