@@ -2,23 +2,22 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class ProyectoMalf {
+
     public static int contador = 0;
     public static ArrayList<Integer> K_AFND = new ArrayList<>();
     public static ArrayList<String> Conexiones = new ArrayList<>();
-
 
     private static int contador() {
         return contador += 1;
     }
 
     private static Nodo crearEstrella_Basica(char caracter) {
-        Nodo nodo = new Nodo(contador(), 0);
-        nodo.anadirTransicion(new Nodo(contador(), 1), '_');
-        nodo.getNodo(0).anadirTransicion(new Nodo(contador(), 1), caracter);
-        nodo.getNodo(0).getNodo(0).anadirTransicion(new Nodo(contador(), 2), '_');
+        Nodo nodo = new Nodo(contador(), EstadoNodo.START);
+        nodo.anadirTransicion(new Nodo(contador(), EstadoNodo.TRANSITION), '_');
+        nodo.getNodo(0).anadirTransicion(new Nodo(contador(), EstadoNodo.TRANSITION), caracter);
+        nodo.getNodo(0).getNodo(0).anadirTransicion(new Nodo(contador(), EstadoNodo.FINAL), '_');
         nodo.getNodo(0).getNodo(0).anadirTransicion(nodo.getNodo(0), '_');
         nodo.anadirTransicion(nodo.getNodo(0).getNodo(0).getNodo(0), '_');
         nodo.fin = nodo.getNodo(0).getNodo(0).getNodo(0);
@@ -26,14 +25,14 @@ public class ProyectoMalf {
     }
 
     private static Nodo crearBarra_Basica(char c1, char c2) {
-        Nodo nodo = new Nodo(contador(), 0);
-        Nodo fin = new Nodo(contador(), 2);
+        Nodo nodo = new Nodo(contador(), EstadoNodo.START);
+        Nodo fin = new Nodo(contador(), EstadoNodo.FINAL);
 
-        nodo.anadirTransicion(new Nodo(contador(), 1), '_');
-        nodo.anadirTransicion(new Nodo(contador(), 1), '_');
+        nodo.anadirTransicion(new Nodo(contador(), EstadoNodo.TRANSITION), '_');
+        nodo.anadirTransicion(new Nodo(contador(), EstadoNodo.TRANSITION), '_');
 
-        nodo.getNodo(0).anadirTransicion(new Nodo(contador(), 1), c1);
-        nodo.getNodo(1).anadirTransicion(new Nodo(contador(), 1), c2);
+        nodo.getNodo(0).anadirTransicion(new Nodo(contador(), EstadoNodo.TRANSITION), c1);
+        nodo.getNodo(1).anadirTransicion(new Nodo(contador(), EstadoNodo.TRANSITION), c2);
 
         nodo.getNodo(0).getNodo(0).anadirTransicion(fin, '_');
         nodo.getNodo(1).getNodo(0).anadirTransicion(fin, '_');
@@ -44,24 +43,24 @@ public class ProyectoMalf {
     }
 
     private static Nodo crearPunto_basico(char caracter1, char caracter2) {
-        Nodo nodo = new Nodo(contador(), 0);
-        nodo.anadirTransicion(new Nodo(contador(), 1), caracter1);
-        nodo.getNodo(0).anadirTransicion(new Nodo(contador(), 2), caracter2);
+        Nodo nodo = new Nodo(contador(), EstadoNodo.START);
+        nodo.anadirTransicion(new Nodo(contador(), EstadoNodo.TRANSITION), caracter1);
+        nodo.getNodo(0).anadirTransicion(new Nodo(contador(), EstadoNodo.FINAL), caracter2);
         nodo.fin = nodo.getNodo(0).getNodo(0);
         return nodo;
     }
 
     private static Nodo estrella(Object entrada) {
         if (entrada instanceof Nodo) {
-            Nodo nodo = new Nodo(contador(), 0);
-            Nodo fin = new Nodo(contador(), 2);
+            Nodo nodo = new Nodo(contador(), EstadoNodo.START);
+            Nodo fin = new Nodo(contador(), EstadoNodo.FINAL);
 
             nodo.anadirTransicion(((Nodo) (entrada)), '_');
             ((Nodo) (entrada)).fin.anadirTransicion(fin, '_');
 
             ((Nodo) entrada).fin.anadirTransicion((Nodo) (entrada), '_');
-            ((Nodo) entrada).setEstado(1);
-            ((Nodo) entrada).fin.setEstado(1);
+            ((Nodo) entrada).setEstado(EstadoNodo.TRANSITION);
+            ((Nodo) entrada).fin.setEstado(EstadoNodo.TRANSITION);
 
             nodo.anadirTransicion(fin, '_');
             nodo.fin = fin;
@@ -80,17 +79,17 @@ public class ProyectoMalf {
         }
         if ((entrada1 instanceof Character) && (entrada2 instanceof Nodo)) {
 
-            Nodo nodo = new Nodo(contador(), 0);
-            Nodo fin = new Nodo(contador(), 2);
+            Nodo nodo = new Nodo(contador(), EstadoNodo.START);
+            Nodo fin = new Nodo(contador(), EstadoNodo.FINAL);
             //caracter
-            nodo.anadirTransicion(new Nodo(contador(), 1), '_');
-            nodo.getNodo(0).anadirTransicion(new Nodo(contador(), 1), (Character) entrada1);
+            nodo.anadirTransicion(new Nodo(contador(), EstadoNodo.TRANSITION), '_');
+            nodo.getNodo(0).anadirTransicion(new Nodo(contador(), EstadoNodo.TRANSITION), (Character) entrada1);
             nodo.getNodo(0).getNodo(0).anadirTransicion(fin, '_');
 
             //nodo
             nodo.anadirTransicion(((Nodo) entrada2), '_');
-            ((Nodo) entrada2).setEstado(1);
-            ((Nodo) entrada2).fin.setEstado(1);
+            ((Nodo) entrada2).setEstado(EstadoNodo.TRANSITION);
+            ((Nodo) entrada2).fin.setEstado(EstadoNodo.TRANSITION);
             ((Nodo) entrada2).fin.anadirTransicion(fin, '_');
 
             nodo.fin = fin;
@@ -98,17 +97,17 @@ public class ProyectoMalf {
             return nodo;
         }
         if ((entrada1 instanceof Nodo) && (entrada2 instanceof Character)) {
-            Nodo nodo = new Nodo(contador(), 0);
-            Nodo fin = new Nodo(contador(), 2);
+            Nodo nodo = new Nodo(contador(), EstadoNodo.START);
+            Nodo fin = new Nodo(contador(), EstadoNodo.FINAL);
             //caracter
-            nodo.anadirTransicion(new Nodo(contador(), 1), '_');
-            nodo.getNodo(0).anadirTransicion(new Nodo(contador(), 1), (Character) entrada2);
+            nodo.anadirTransicion(new Nodo(contador(), EstadoNodo.TRANSITION), '_');
+            nodo.getNodo(0).anadirTransicion(new Nodo(contador(), EstadoNodo.TRANSITION), (Character) entrada2);
             nodo.getNodo(0).getNodo(0).anadirTransicion(fin, '_');
 
             //nodo
             nodo.anadirTransicion(((Nodo) entrada1), '_');
-            ((Nodo) entrada1).setEstado(1);
-            ((Nodo) entrada1).fin.setEstado(1);
+            ((Nodo) entrada1).setEstado(EstadoNodo.TRANSITION);
+            ((Nodo) entrada1).fin.setEstado(EstadoNodo.TRANSITION);
             ((Nodo) entrada1).fin.anadirTransicion(fin, '_');
 
             nodo.fin = fin;
@@ -116,17 +115,17 @@ public class ProyectoMalf {
             return nodo;
         }
         if ((entrada1 instanceof Nodo) && (entrada2 instanceof Nodo)) {
-            Nodo nodo = new Nodo(contador(), 0);
-            Nodo fin = new Nodo(contador(), 2);
+            Nodo nodo = new Nodo(contador(), EstadoNodo.START);
+            Nodo fin = new Nodo(contador(), EstadoNodo.FINAL);
 
             nodo.anadirTransicion(((Nodo) entrada1), '_');
             nodo.anadirTransicion(((Nodo) entrada2), '_');
 
-            ((Nodo) entrada1).setEstado(1);
-            ((Nodo) entrada2).setEstado(1);
+            ((Nodo) entrada1).setEstado(EstadoNodo.TRANSITION);
+            ((Nodo) entrada2).setEstado(EstadoNodo.TRANSITION);
 
-            ((Nodo) entrada1).fin.setEstado(1);
-            ((Nodo) entrada2).fin.setEstado(1);
+            ((Nodo) entrada1).fin.setEstado(EstadoNodo.TRANSITION);
+            ((Nodo) entrada2).fin.setEstado(EstadoNodo.TRANSITION);
 
             ((Nodo) entrada1).fin.anadirTransicion(fin, '_');
             ((Nodo) entrada2).fin.anadirTransicion(fin, '_');
@@ -137,7 +136,6 @@ public class ProyectoMalf {
         }
         return null;
     }
-
 
     //esta lista esta wea
     private static Nodo Punto(Object entrada1, Object entrada2) {
@@ -146,16 +144,16 @@ public class ProyectoMalf {
             return nodo;
         }
         if ((entrada1 instanceof Character) && (entrada2 instanceof Nodo)) {
-            Nodo nodo = new Nodo(contador(), 0);
+            Nodo nodo = new Nodo(contador(), EstadoNodo.START);
             nodo.anadirTransicion((Nodo) (entrada2), (Character) (entrada1));
-            ((Nodo) (entrada2)).setEstado(1);
+            ((Nodo) (entrada2)).setEstado(EstadoNodo.TRANSITION);
             nodo.fin = ((Nodo) (entrada2)).fin;
             return nodo;
         }
         if ((entrada1 instanceof Nodo) && (entrada2 instanceof Character)) {
             Nodo nodo = ((Nodo) (entrada1));
-            Nodo auxfin = new Nodo(contador(), 2);
-            nodo.fin.setEstado(1);
+            Nodo auxfin = new Nodo(contador(), EstadoNodo.FINAL);
+            nodo.fin.setEstado(EstadoNodo.TRANSITION);
             nodo.fin.anadirTransicion(auxfin, ((Character) (entrada2)));
             nodo.fin = auxfin;
             return nodo;
@@ -164,9 +162,9 @@ public class ProyectoMalf {
             Nodo nodo = ((Nodo) (entrada1));
             Nodo auxfin = ((Nodo) (entrada2));
             nodo.fin.anadirTransicion(auxfin, '_');
-            nodo.fin.setEstado(1);
+            nodo.fin.setEstado(EstadoNodo.TRANSITION);
             nodo.fin = auxfin.fin;
-            auxfin.setEstado(1);
+            auxfin.setEstado(EstadoNodo.TRANSITION);
 
             return nodo;
         }
@@ -175,8 +173,8 @@ public class ProyectoMalf {
     }
 
     private static Nodo casoBase(Character a) {
-        Nodo nodo = new Nodo(contador(), 0);
-        nodo.anadirTransicion(new Nodo(contador(), 2), a);
+        Nodo nodo = new Nodo(contador(), EstadoNodo.START);
+        nodo.anadirTransicion(new Nodo(contador(), EstadoNodo.FINAL), a);
         nodo.fin = nodo.getNodo(0);
         return nodo;
     }
@@ -342,36 +340,21 @@ public class ProyectoMalf {
         imprimirNodo(grafo);
     }
 
-    public static class Parse {
-        private Nodo nodo;
-        private char caracter;
-        private boolean isNodo = false;
-        Nodo fin;
-
-        public Parse(Nodo node) {
-            this.nodo = nodo;
-            isNodo = true;
-        }
-
-        public Parse(char caracter) {
-            this.caracter = caracter;
-        }
-
-        public boolean isNodo() {
-            return this.isNodo;
-        }
-
+    enum EstadoNodo {
+        START,
+        TRANSITION,
+        FINAL
     }
 
     public static class Nodo {
         int numero;
-        int estado;//puede ser 0 de transicion, 1 de inicio, 2 de final
+        EstadoNodo estado;
         boolean check = false;
         ArrayList<Character> transiciones;
         ArrayList<Nodo> conexion;
         Nodo fin;
 
-        public Nodo(int numero, int estado) {
+        public Nodo(int numero, EstadoNodo estado) {
             K_AFND.add(numero);
             this.numero = numero;
             this.estado = estado;
@@ -380,8 +363,8 @@ public class ProyectoMalf {
         }
 
         public static void changeComienzo(Nodo nodo1, Nodo nodo2, char transicion) {
-            nodo1.setEstado(0);
-            nodo2.setEstado(1);
+            nodo1.setEstado(EstadoNodo.START);
+            nodo2.setEstado(EstadoNodo.TRANSITION);
             nodo1.anadirTransicion(nodo2, transicion);
         }
 
@@ -411,16 +394,37 @@ public class ProyectoMalf {
             return numero;
         }
 
-        public int getEstado() {
+        public EstadoNodo getEstado() {
             return estado;
         }
 
-        public void setEstado(int estado) {
+        public void setEstado(EstadoNodo estado) {
             this.estado = estado;
         }
 
         public boolean existeEnTransicion(String search) {
             return transiciones.contains(search);
+        }
+
+    }
+
+    public static class Parse {
+        Nodo fin;
+        private Nodo nodo;
+        private char caracter;
+        private boolean isNodo = false;
+
+        public Parse(Nodo node) {
+            this.nodo = nodo;
+            isNodo = true;
+        }
+
+        public Parse(char caracter) {
+            this.caracter = caracter;
+        }
+
+        public boolean isNodo() {
+            return this.isNodo;
         }
 
     }
