@@ -49,8 +49,9 @@ public class ProyectoMalf {
     }
 
     private static Node estrella(Object entrada) {
+        Node node;
         if (entrada instanceof Node) {
-            Node node = new Node(NodeStatus.START);
+            node = new Node(NodeStatus.START);
             Node fin = new Node(NodeStatus.FINAL);
 
             node.addTransition(((Node) (entrada)), '_');
@@ -62,12 +63,10 @@ public class ProyectoMalf {
 
             node.addTransition(fin, '_');
             node.finalNode = fin;
+        } else {
+            node = crearEstrella_Basica((Character) entrada);
         }
-        if (entrada instanceof Character) {
-            Node node = crearEstrella_Basica((Character) entrada);
-            return node;
-        }
-        return null;
+        return node;
     }
 
     private static Node barra(Object entrada1, Object entrada2) {
@@ -193,76 +192,68 @@ public class ProyectoMalf {
         }
 
         for (int i = 0; i < expression.size(); i++) {
-            if (expression.get(i) instanceof Character) {
-                if ((Character) expression.get(i) == '(') {
-                    ArrayList<Object> auxiliar = parentesis(expression, i);
-                    int indiceMayor = indexFinalParenthesis(expression, i);
+            if (expression.get(i) instanceof Character && (Character) expression.get(i) == '(') {
+                ArrayList<Object> auxiliar = parentesis(expression, i);
+                int indiceMayor = indexFinalParenthesis(expression, i);
 
-                    for (int k = 0; k < indiceMayor - i; k++)
-                        expression.remove(i);
+                for (int k = 0; k < indiceMayor - i; k++)
+                    expression.remove(i);
 
-                    expression.set(i, recursion(auxiliar));
-                }
+                expression.set(i, recursion(auxiliar));
             }
         }
 
         for (int i = 0; i < expression.size(); i++) {
-            if (expression.get(i) instanceof Character) {
-                if ((Character) expression.get(i) == '*') {
-                    aux = estrella(expression.get(i - 1));
+            if (expression.get(i) instanceof Character && (Character) expression.get(i) == '*') {
+                aux = estrella(expression.get(i - 1));
 
-                    expression.remove(i);
-                    expression.remove(i - 1);
-                    expression.add(i - 1, aux);
-                    i--;
-                }
+                expression.remove(i);
+                expression.remove(i - 1);
+                expression.add(i - 1, aux);
+                i--;
             }
         }
 
         for (int i = 0; i < expression.size(); i++) {
-            if (expression.get(i) instanceof Character) {
-                if ((Character) expression.get(i) == '.') {
-                    aux = Punto(expression.get(i - 1), expression.get(i + 1));
+            if (expression.get(i) instanceof Character && (Character) expression.get(i) == '.') {
+                aux = Punto(expression.get(i - 1), expression.get(i + 1));
 
-                    expression.remove(i + 1);
-                    expression.remove(i);
-                    expression.remove(i - 1);
-                    expression.add(i - 1, aux);
-                    i--;
-                }
+                expression.remove(i + 1);
+                expression.remove(i);
+                expression.remove(i - 1);
+                expression.add(i - 1, aux);
+                i--;
             }
         }
 
         for (int i = 0; i < expression.size(); i++) {
-            if (expression.get(i) instanceof Character) {
-                if ((Character) expression.get(i) == '|') {
-                    aux = barra(expression.get(i - 1), expression.get(i + 1));
+            if (expression.get(i) instanceof Character && (Character) expression.get(i) == '|') {
+                aux = barra(expression.get(i - 1), expression.get(i + 1));
 
-                    expression.remove(i + 1);
-                    expression.remove(i);
-                    expression.remove(i - 1);
-                    expression.add(i - 1, aux);
-                    i--;
-                }
+                expression.remove(i + 1);
+                expression.remove(i);
+                expression.remove(i - 1);
+                expression.add(i - 1, aux);
+                i--;
             }
         }
         return (Node) expression.get(0);
     }
 
-    private static ArrayList parentesis(ArrayList lista, int index) {
+    private static ArrayList parentesis(ArrayList list, int index) {
         ArrayList<Object> aux = new ArrayList<>();
         int count = 0;
-        if ((Character) lista.get(index) == '(') {
-            for (int i = index + 1; i < lista.size(); i++) {
-                if ((Character) lista.get(i) == '(')
+        if ((Character) list.get(index) == '(') {
+            for (int i = index + 1; i < list.size(); i++) {
+                if ((Character) list.get(i) == '(')
                     count++;
-                else if ((Character) lista.get(i) == ')') {
+                else if ((Character) list.get(i) == ')') {
                     if (count > 0)
                         count--;
                     else
                         return aux;
                 }
-                aux.add(lista.get(i));
+                aux.add(list.get(i));
             }
         }
         return null;
