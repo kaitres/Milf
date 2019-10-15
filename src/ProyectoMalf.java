@@ -11,6 +11,19 @@ public class ProyectoMalf {
     public static ArrayList<String> Connections_AFND = new ArrayList<>();
     public static HashSet<Character> Sigma_AFND = new HashSet<>();
 
+    //pobre que me cambies esta wea que no trabajo mas contigo
+    private static ArrayList<Node> buscar(Node nodo){
+        ArrayList<Node> nodos= new ArrayList<>();
+        for (int i=0; i< nodo.transitions.size();i++){
+
+            if(nodo.getTransition(i)=='_'){
+                nodos.add(nodo.connections.get(i));
+                nodos.addAll(buscar(nodo.connections.get(i)));
+            }
+        }
+        return nodos;
+    }
+
     private static Node crearEstrella_Basica(char caracter) {
         Node node = new Node(NodeStatus.START);
         node.addTransition(new Node(NodeStatus.TRANSITION), '_');
@@ -194,7 +207,7 @@ public class ProyectoMalf {
         for (int i = 0; i < expression.size(); i++) {
             if (expression.get(i) instanceof Character && (Character) expression.get(i) == '(') {
                 ArrayList<Object> auxiliar = parentesis(expression, i);
-                int indiceMayor = indexFinalParenthesis(expression, i);
+                int indiceMayor = indeceFinalParenthesis(expression, i);
 
                 for (int k = 0; k < indiceMayor - i; k++)
                     expression.remove(i);
@@ -259,7 +272,7 @@ public class ProyectoMalf {
         return null;
     }
 
-    private static int indexFinalParenthesis(ArrayList lista, int index) {
+    private static int indeceFinalParenthesis(ArrayList lista, int index) {
         int count = 0;
         if ((Character) lista.get(index) == '(') {
             for (int i = index + 1; i < lista.size(); i++) {
@@ -307,7 +320,7 @@ public class ProyectoMalf {
         try {
             regex = br.readLine();
         } catch (IOException e) {
-            System.out.println("Can't read from input");
+            System.out.println("No puedo leer la entrada");
             e.printStackTrace();
             System.exit(-1);
         }
@@ -320,6 +333,12 @@ public class ProyectoMalf {
 
         graph = recursion(parsing);
         printAFND(graph);
+        ArrayList<Node> nodos= new ArrayList<>();
+        nodos=buscar(graph);
+        System.out.println("ksakdnkansd");
+        for (int i = 0; i <nodos.size() ; i++) {
+            System.out.println(nodos.get(i).id);
+        }
     }
 
     enum NodeStatus {
@@ -344,6 +363,7 @@ public class ProyectoMalf {
             this.connections = new ArrayList<>();
             this.transitions = new ArrayList<>();
         }
+
 
         public static void changeStart(Node node1, Node node2, char transition) {
             node1.status = NodeStatus.START;
@@ -374,6 +394,7 @@ public class ProyectoMalf {
         }
 
     }
+
 
     public static class Parse {
         Node fin;
