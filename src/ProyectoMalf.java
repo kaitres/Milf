@@ -1,23 +1,15 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Scanner;
 
 public class ProyectoMalf {
 
     private static HashSet<Character> Sigma = new HashSet<>();
 
     public static void main(String[] args) {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        Scanner sc = new Scanner(System.in);
         String regex = "";
-        try {
-            regex = br.readLine();
-        } catch (IOException e) {
-            System.out.println("Can't read from input");
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        regex = sc.nextLine();
 
         ArrayList<Object> parsedRegex = new ArrayList<>();
         for (int i = 0; i < regex.length(); i++) {
@@ -35,6 +27,36 @@ public class ProyectoMalf {
         //generateAFD(afnd);
         AFD afd = new AFD(afnd);
         System.out.println(afd);
+
+        String text = "";
+        while (sc.hasNextLine())
+            text += sc.nextLine();
+
+        System.out.println("Ocurrencias");
+        System.out.println(checkOcurrencies(afd, text));
+    }
+
+    private static String checkOcurrencies(AFD afd, String text) {
+        String s = "", currentLine = "";
+        int lineId = 1, positionInLine = 1;
+        NodeAFD currentNode = AFD.s;
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) == '-') {
+                if (!currentLine.equals(""))
+                    s += "linea " + lineId + ": " + currentLine + "\n";
+                positionInLine = 1;
+                lineId++;
+                currentLine = "";
+            } else {
+                currentNode = currentNode.nextNode(text.charAt(i));
+                if (currentNode.status == NodeStatus.FINAL)
+                    currentLine += positionInLine + " ";
+                positionInLine++;
+            }
+        }
+        if (!currentLine.equals(""))
+            s += "linea " + lineId + ": " + currentLine + "\n";
+        return s;
     }
 
     enum NodeStatus {
@@ -278,6 +300,10 @@ public class ProyectoMalf {
                     i--;
                 }
             }
+            Node s = (Node) expression.get(0);
+            for (Object c : sigma) {
+                s.addTransition(s, (Character) c);
+            }
             return (Node) expression.get(0);
         }
 
@@ -393,7 +419,7 @@ public class ProyectoMalf {
 
         AFD(AFND afnd) {
             sigma = Sigma.toArray();
-            s = new NodeAFD(eClossure(afnd.s, '_'), NodeStatus.START);
+            s = new NodeAFD(eClossure(AFND.s, '_'), NodeStatus.START);
             k.add(s);
 
             System.out.println(k.size());
@@ -493,8 +519,13 @@ public class ProyectoMalf {
             this.status = status;
         }
 
-        void addNodes(ArrayList<Node> nodesAFND) {
-            this.nodesAFND.addAll(nodesAFND);
+        NodeAFD nextNode(Character c) {
+            NodeAFD next = null;
+            for (TransitionAFD transition : transitions) {
+                if (transition.transitionCharacter == c)
+                    next = transition.end;
+            }
+            return next;
         }
 
         public String toString() {
