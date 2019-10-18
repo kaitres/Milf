@@ -8,7 +8,7 @@ public class ProyectoMalf {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        String regex = "";
+        String regex;
         regex = sc.nextLine();
 
         ArrayList<Object> parsedRegex = new ArrayList<>();
