@@ -360,7 +360,8 @@ public class ProyectoMalf {
 
             s += "Delta:\n";
             for (Transition t : delta)
-                s += t.toString() + "\n";
+                if (t.transitionCharacter != '0')
+                    s += t.toString() + "\n";
 
             s += "s=" + AFND.s + "\n";
             s += "F={" + f + "}\n";
