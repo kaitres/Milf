@@ -32,7 +32,7 @@ public class ProyectoMalf {
         while (sc.hasNextLine())
             text += sc.nextLine();
 
-        System.out.println("Ocurrencias");
+        System.out.println("Ocurrencias:");
         System.out.println(checkOcurrencies(afd, text));
     }
 
@@ -56,6 +56,8 @@ public class ProyectoMalf {
         }
         if (!currentLine.equals(""))
             s += "linea " + lineId + ": " + currentLine + "\n";
+        if (s.equals(""))
+            s += "Ninguna\n";
         return s;
     }
 
