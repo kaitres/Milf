@@ -47,6 +47,9 @@ public class ProyectoMalf {
                 positionInLine = 1;
                 lineId++;
                 currentLine = "";
+            } else if (!afd.containsInSigma(text.charAt(i))) {
+                currentNode = AFD.s;
+                positionInLine++;
             } else {
                 currentNode = currentNode.nextNode(text.charAt(i));
                 if (currentNode.status == NodeStatus.FINAL)
@@ -259,6 +262,10 @@ public class ProyectoMalf {
             for (int i = 0; i < expression.size(); i++) {
                 if (expression.get(i) instanceof Character && (Character) expression.get(i) == '(') {
                     ArrayList<Object> auxiliar = parenthesis(expression, i);
+                    if (auxiliar.isEmpty()) {
+                        System.out.println("Expresión incorrecta");
+                        System.exit(0);
+                    }
                     int indiceMayor = indexFinalParenthesis(expression, i);
 
                     for (int k = 0; k < indiceMayor - i; k++)
@@ -425,7 +432,6 @@ public class ProyectoMalf {
             s = new NodeAFD(eClossure(AFND.s, '_'), NodeStatus.START);
             k.add(s);
 
-            System.out.println(k.size());
             for (int i = 0; i < k.size(); i++) {
                 for (Object c : sigma) {
                     HashSet<Node> hs = new HashSet<>();
@@ -456,7 +462,7 @@ public class ProyectoMalf {
             }
         }
 
-        private HashSet<Node> eClossure(Node node, char c) {
+        HashSet<Node> eClossure(Node node, char c) {
             HashSet<Node> nodes = new HashSet<>();
             if (c == '_')
                 nodes.add(node);
@@ -480,6 +486,13 @@ public class ProyectoMalf {
 
         boolean isFinal(NodeAFD node) {
             return node.nodesAFND.contains(AFND.f);
+        }
+
+        boolean containsInSigma(char c) {
+            for (Object sigmaC : sigma)
+                if ((char) sigmaC == c)
+                    return true;
+            return false;
         }
 
         public String toString() {
