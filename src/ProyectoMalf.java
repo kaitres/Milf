@@ -18,13 +18,13 @@ public class ProyectoMalf {
                 Sigma.add(regex.charAt(i));
             }
         }
+        Sigma.add('0');
 
         // AFND
         AFND afnd = new AFND(parsedRegex);
         System.out.println(afnd);
 
         // AFD
-        //generateAFD(afnd);
         AFD afd = new AFD(afnd);
         System.out.println(afd);
 
@@ -236,7 +236,6 @@ public class ProyectoMalf {
 
                 return node;
             }
-
             return null;
         }
 
@@ -362,7 +361,8 @@ public class ProyectoMalf {
 
             s += "Sigma={";
             for (Object c : sigma)
-                s += (c + ",");
+                if ((Character) c != '0')
+                    s += (c + ",");
             s = s.substring(0, s.length() - 1) + "}\n";
 
             s += "Delta:\n";
@@ -505,12 +505,14 @@ public class ProyectoMalf {
 
             s += "Sigma={";
             for (Object c : sigma)
-                s += (c + ",");
+                if ((Character) c != '0')
+                    s += (c + ",");
             s = s.substring(0, s.length() - 1) + "}\n";
 
             s += "Delta:\n";
             for (TransitionAFD t : delta)
-                s += t.toString() + "\n";
+                if (t.transitionCharacter != '0')
+                    s += t.toString() + "\n";
 
             s += "s=" + AFD.s + "\n";
             s += "F={";
